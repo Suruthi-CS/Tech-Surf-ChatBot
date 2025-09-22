@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Excel to AI Chat Platform</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <div class="container mx-auto px-4 py-8 max-w-4xl">
+        <!-- Header -->
+        <div class="text-center mb-8">
+            <h1 class="text-3xl font-bold text-gray-900 mb-2">Excel to AI Chat Platform</h1>
+            <p class="text-gray-600">Upload Excel → Store in Contentstack → Chat with AI</p>
+        </div>
+
+        <!-- Model Selection -->
+        <div class="bg-white rounded-lg shadow p-6 mb-6">
+            <h2 class="text-xl font-semibold mb-4">AI Model Selection</h2>
+            <select id="modelSelect" class="w-full p-3 border border-gray-300 rounded-lg">
+                <option value="anthropic/claude-3-haiku">Claude 3 Haiku (Fast)</option>
+                <option value="anthropic/claude-3-sonnet">Claude 3 Sonnet (Balanced)</option>
+                <option value="openai/gpt-3.5-turbo">GPT-3.5 Turbo</option>
+                <option value="openai/gpt-4">GPT-4</option>
+            </select>
+        </div>
+
+        <!-- Excel Upload -->
+        <div class="bg-white rounded-lg shadow p-6 mb-6">
+            <h2 class="text-xl font-semibold mb-4">Upload Excel File</h2>
+            <div class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
+                <input type="file" id="excelFile" accept=".xlsx,.xls" class="hidden">
+                <div id="uploadArea" class="cursor-pointer">
+                    <div class="text-4xl mb-4">📊</div>
+                    <p class="text-gray-600 mb-2">Click to upload Excel file</p>
+                    <p class="text-sm text-gray-500">Supports .xlsx and .xls files</p>
+                </div>
+                <div id="uploadStatus" class="hidden mt-4">
+                    <div class="text-blue-600">Uploading to Contentstack...</div>
+                    <div class="w-full bg-gray-200 rounded-full h-2 mt-2">
+                        <div id="progressBar" class="bg-blue-600 h-2 rounded-full" style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+            <div id="uploadResult" class="mt-4 hidden"></div>
+        </div>
+
+        <!-- View Contentstack Data -->
+        <div class="bg-white rounded-lg shadow p-6 mb-6">
+            <h2 class="text-xl font-semibold mb-4">View Your Contentstack Data</h2>
+            <button id="viewDataButton" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">
+                Check What's in Contentstack
+            </button>
+            <div id="contentstackData" class="mt-4 hidden">
+                <div class="bg-gray-50 rounded-lg p-4 max-h-64 overflow-y-auto">
+                    <div id="dataContent"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chat Interface -->
+        <div class="bg-white rounded-lg shadow p-6">
+            <h2 class="text-xl font-semibold mb-4">Chat with Your Data</h2>
+            
+            <!-- Chat Messages -->
+            <div id="chatMessages" class="h-64 overflow-y-auto border border-gray-200 rounded-lg p-4 mb-4 bg-gray-50">
+                <div class="text-gray-500 text-center">Upload Excel data first, then start chatting!</div>
+            </div>
+
+            <!-- Chat Input -->
+            <div class="flex gap-2">
+                <input 
+                    type="text" 
+                    id="chatInput" 
+                    placeholder="Ask about your uploaded data..."
+                    class="flex-1 p-3 border border-gray-300 rounded-lg"
+                    disabled
+                >
+                <button 
+                    id="sendButton" 
+                    class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
+                    disabled
+                >
+                    Send
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let hasData = false;
+
+        // View Contentstack data
+        document.getElementById('viewDataButton').onclick = async () => {
+            const button = document.getElementById('viewDataButton');
+            const dataDiv = document.getElementById('contentstackData');
+            const contentDiv = document.getElementById('dataContent');
+
+            button.textContent = 'Loading...';
+            button.disabled = true;
+
+            try {
+                const response = await fetch('http://localhost:7000/api/contentstack/search');
+                const result = await response.json();
+
+                if (response.ok && result.entries && result.entries.length > 0) {
+                    contentDiv.innerHTML = `
+                        <div class="text-green-600 font-semibold mb-3">✅ Found ${result.entries.length} entries in Contentstack:</div>
+                        ${result.entries.map((entry, i) => `
+                            <div class="border-b border-gray-200 pb-2 mb-2">
+                                <div class="font-medium">${i + 1}. ${entry.title || 'Untitled'}</div>
+                                <div class="text-sm text-gray-600">UID: ${entry.uid}</div>
+                                ${entry.description ? `<div class="text-sm text-gray-700">${entry.description.substring(0, 100)}...</div>` : ''}
+                                ${entry.price ? `<div class="text-sm text-blue-600">Price: ${entry.price}</div>` : ''}
+                            </div>
+                        `).join('')}
+                    `;
+                } else {
+                    contentDiv.innerHTML = `
+                        <div class="text-red-600">❌ No data found in Contentstack</div>
+                        <div class="text-sm text-gray-600 mt-2">Upload an Excel file first to import data.</div>
+                    `;
+                }
+
+                dataDiv.classList.remove('hidden');
+            } catch (error) {
+                contentDiv.innerHTML = `
+                    <div class="text-red-600">❌ Error checking Contentstack: ${error.message}</div>
+                `;
+                dataDiv.classList.remove('hidden');
+            }
+
+            button.textContent = 'Check What\'s in Contentstack';
+            button.disabled = false;
+        };
+
+        // File upload handling
+        document.getElementById('uploadArea').onclick = () => {
+            document.getElementById('excelFile').click();
+        };
+
+        document.getElementById('excelFile').onchange = async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const uploadStatus = document.getElementById('uploadStatus');
+            const uploadResult = document.getElementById('uploadResult');
+            const progressBar = document.getElementById('progressBar');
+
+            uploadStatus.classList.remove('hidden');
+            uploadResult.classList.add('hidden');
+
+            // Simulate progress
+            let progress = 0;
+            const progressInterval = setInterval(() => {
+                progress += 10;
+                progressBar.style.width = progress + '%';
+                if (progress >= 90) clearInterval(progressInterval);
+            }, 200);
+
+            try {
+                const formData = new FormData();
+                formData.append('excelFile', file);
+
+                const response = await fetch('http://localhost:7000/api/import/excel', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+                
+                clearInterval(progressInterval);
+                progressBar.style.width = '100%';
+
+                setTimeout(() => {
+                    uploadStatus.classList.add('hidden');
+                    
+                    if (response.ok) {
+                        uploadResult.innerHTML = `
+                            <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+                                <div class="text-green-800 font-semibold">✅ Upload Successful!</div>
+                                <div class="text-green-700 text-sm mt-1">
+                                    📁 Excel file "${result.excel_file.name}" stored in Contentstack
+                                </div>
+                                <div class="text-green-700 text-sm">
+                                    📊 ${result.successful_imports} of ${result.total_rows} rows imported as entries
+                                </div>
+                                ${result.excel_file.asset_uid ? 
+                                    `<div class="text-green-600 text-xs mt-1">Asset UID: ${result.excel_file.asset_uid}</div>` : 
+                                    ''
+                                }
+                            </div>
+                        `;
+                        hasData = true;
+                        enableChat();
+                    } else {
+                        uploadResult.innerHTML = `
+                            <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+                                <div class="text-red-800 font-semibold">❌ Upload Failed</div>
+                                <div class="text-red-700 text-sm mt-1">${result.error}</div>
+                            </div>
+                        `;
+                    }
+                    uploadResult.classList.remove('hidden');
+                }, 500);
+
+            } catch (error) {
+                clearInterval(progressInterval);
+                uploadStatus.classList.add('hidden');
+                uploadResult.innerHTML = `
+                    <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+                        <div class="text-red-800 font-semibold">❌ Upload Error</div>
+                        <div class="text-red-700 text-sm mt-1">${error.message}</div>
+                    </div>
+                `;
+                uploadResult.classList.remove('hidden');
+            }
+        };
+
+        function enableChat() {
+            document.getElementById('chatInput').disabled = false;
+            document.getElementById('sendButton').disabled = false;
+            document.getElementById('chatMessages').innerHTML = `
+                <div class="text-green-600 text-center">✅ Data uploaded! You can now chat with your data.</div>
+            `;
+        }
+
+        // Chat handling
+        document.getElementById('sendButton').onclick = sendMessage;
+        document.getElementById('chatInput').onkeypress = (e) => {
+            if (e.key === 'Enter') sendMessage();
+        };
+
+        async function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            if (!message || !hasData) return;
+
+            const chatMessages = document.getElementById('chatMessages');
+            const model = document.getElementById('modelSelect').value;
+
+            // Add user message
+            addMessage('user', message);
+            input.value = '';
+
+            // Add loading message
+            const loadingId = addMessage('assistant', '🤔 Thinking...');
+
+            try {
+                const response = await fetch('http://localhost:7000/api/chat/completions', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        messages: [
+                            { role: 'user', content: message }
+                        ],
+                        model: model,
+                        enhance_with_content: true,
+                        temperature: 0.7,
+                        max_tokens: 1000
+                    })
+                });
+
+                const result = await response.json();
+                
+                // Remove loading message
+                document.getElementById(loadingId).remove();
+
+                if (response.ok) {
+                    addMessage('assistant', result.message.content);
+                } else {
+                    addMessage('assistant', '❌ Error: ' + result.error);
+                }
+
+            } catch (error) {
+                document.getElementById(loadingId).remove();
+                addMessage('assistant', '❌ Connection error: ' + error.message);
+            }
+        }
+
+        function addMessage(role, content) {
+            const chatMessages = document.getElementById('chatMessages');
+            const messageId = 'msg_' + Date.now();
+            
+            const messageDiv = document.createElement('div');
+            messageDiv.id = messageId;
+            messageDiv.className = `mb-4 ${role === 'user' ? 'text-right' : 'text-left'}`;
+            
+            messageDiv.innerHTML = `
+                <div class="inline-block max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
+                    role === 'user' 
+                        ? 'bg-blue-600 text-white' 
+                        : 'bg-gray-200 text-gray-900'
+                }">
+                    ${content}
+                </div>
+            `;
+            
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            
+            return messageId;
+        }
+    </script>
+</body>
+</html>

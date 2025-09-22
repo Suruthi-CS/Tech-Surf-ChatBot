@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manual Data Entry - Contentstack</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <div class="container mx-auto px-4 py-8 max-w-4xl">
+        <!-- Header -->
+        <div class="text-center mb-8">
+            <h1 class="text-3xl font-bold text-gray-900 mb-2">Manual Data Entry</h1>
+            <p class="text-gray-600">Since Excel upload isn't working, add data manually to Contentstack</p>
+        </div>
+
+        <!-- Instructions -->
+        <div class="bg-blue-50 rounded-lg p-6 mb-6">
+            <h2 class="text-xl font-semibold text-blue-900 mb-4">📋 How to Add Data Manually:</h2>
+            
+            <div class="space-y-4">
+                <div class="bg-white rounded-lg p-4">
+                    <h3 class="font-semibold text-blue-800 mb-2">Step 1: Go to Contentstack</h3>
+                    <p class="text-blue-700">Login to your Contentstack dashboard → Select "development" stack</p>
+                </div>
+
+                <div class="bg-white rounded-lg p-4">
+                    <h3 class="font-semibold text-blue-800 mb-2">Step 2: Add Entries</h3>
+                    <p class="text-blue-700">Go to <strong>Entries → tour</strong> → Click <strong>"+ Add Entry"</strong></p>
+                </div>
+
+                <div class="bg-white rounded-lg p-4">
+                    <h3 class="font-semibold text-blue-800 mb-2">Step 3: Fill Entry Fields</h3>
+                    <div class="text-blue-700">
+                        <p><strong>Title:</strong> Tour name (e.g., "Paris City Tour")</p>
+                        <p><strong>Description:</strong> Tour details</p>
+                        <p><strong>Price:</strong> Tour price</p>
+                        <p><strong>Duration:</strong> How long</p>
+                        <p><strong>Location:</strong> Where</p>
+                        <p><strong>Any other fields</strong> from your Excel</p>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg p-4">
+                    <h3 class="font-semibold text-blue-800 mb-2">Step 4: Publish</h3>
+                    <p class="text-blue-700">Click <strong>"Save & Publish"</strong> to make it available to the AI</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sample Data -->
+        <div class="bg-white rounded-lg shadow p-6 mb-6">
+            <h2 class="text-xl font-semibold mb-4">📊 Sample Data to Add:</h2>
+            <div class="overflow-x-auto">
+                <table class="w-full border-collapse border border-gray-300">
+                    <thead>
+                        <tr class="bg-gray-50">
+                            <th class="border border-gray-300 px-4 py-2 text-left">Title</th>
+                            <th class="border border-gray-300 px-4 py-2 text-left">Description</th>
+                            <th class="border border-gray-300 px-4 py-2 text-left">Price</th>
+                            <th class="border border-gray-300 px-4 py-2 text-left">Duration</th>
+                            <th class="border border-gray-300 px-4 py-2 text-left">Location</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="border border-gray-300 px-4 py-2">Paris City Tour</td>
+                            <td class="border border-gray-300 px-4 py-2">Explore the beautiful city of Paris</td>
+                            <td class="border border-gray-300 px-4 py-2">$299</td>
+                            <td class="border border-gray-300 px-4 py-2">3 days</td>
+                            <td class="border border-gray-300 px-4 py-2">Paris, France</td>
+                        </tr>
+                        <tr>
+                            <td class="border border-gray-300 px-4 py-2">Tokyo Adventure</td>
+                            <td class="border border-gray-300 px-4 py-2">Experience modern and traditional Japan</td>
+                            <td class="border border-gray-300 px-4 py-2">$599</td>
+                            <td class="border border-gray-300 px-4 py-2">5 days</td>
+                            <td class="border border-gray-300 px-4 py-2">Tokyo, Japan</td>
+                        </tr>
+                        <tr>
+                            <td class="border border-gray-300 px-4 py-2">New York Explorer</td>
+                            <td class="border border-gray-300 px-4 py-2">Discover the city that never sleeps</td>
+                            <td class="border border-gray-300 px-4 py-2">$449</td>
+                            <td class="border border-gray-300 px-4 py-2">4 days</td>
+                            <td class="border border-gray-300 px-4 py-2">New York, USA</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Test Chat -->
+        <div class="bg-white rounded-lg shadow p-6">
+            <h2 class="text-xl font-semibold mb-4">🤖 Test Your Data</h2>
+            <p class="text-gray-600 mb-4">After adding entries manually, test if the AI can access them:</p>
+            
+            <div class="bg-gray-50 rounded-lg p-4">
+                <p class="font-medium text-gray-800">Try asking:</p>
+                <ul class="list-disc list-inside text-gray-700 mt-2 space-y-1">
+                    <li>"What tours do you have available?"</li>
+                    <li>"Tell me about Paris tours"</li>
+                    <li>"What's the price for Tokyo tours?"</li>
+                    <li>"Show me all tour locations"</li>
+                </ul>
+            </div>
+
+            <div class="mt-4">
+                <a href="/" class="inline-block px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                    Go Back to Chat Platform
+                </a>
+            </div>
+        </div>
+
+        <!-- Current Status -->
+        <div class="bg-yellow-50 rounded-lg p-6 mt-6">
+            <h3 class="font-semibold text-yellow-800 mb-2">🔧 Current Status:</h3>
+            <ul class="text-yellow-700 space-y-1">
+                <li>✅ <strong>OpenRouter API:</strong> Working perfectly</li>
+                <li>✅ <strong>Contentstack Read:</strong> Working (can access "italy is good")</li>
+                <li>❌ <strong>Management API:</strong> Token issue - can't auto-upload Excel</li>
+                <li>✅ <strong>Manual Entry:</strong> Works fine through Contentstack dashboard</li>
+            </ul>
+            
+            <div class="mt-4 p-3 bg-yellow-100 rounded">
+                <p class="text-yellow-800 text-sm">
+                    <strong>Recommendation:</strong> For your competition, manually add 3-5 tour entries in Contentstack, 
+                    then demonstrate the AI chat functionality. This shows real Contentstack integration!
+                </p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

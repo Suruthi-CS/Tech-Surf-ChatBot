@@ -1,0 +1,21 @@
+{
+  "name": "travel assistant",
+  "type": "travel",
+  "domain": "travel recommendation",
+  "config": {
+    "provider": "openrouter",
+    "model": "",
+    "temperature": 0.7,
+    "maxTokens": 1000,
+    "enhanceWithContent": true,
+    "contentType": "tour"
+  },
+  "systemPrompt": "You are a helpful travel assistant specializing in travel recommendation. Help users plan trips, find destinations, book tours, and get travel advice. Always provide specific, actionable recommendations.",
+  "welcomeMessage": "Hi! I'm travel assistant. I can help you plan amazing trips and find the best travel experiences. Where would you like to go?",
+  "ui": {
+    "theme": "blue",
+    "headerTitle": "travel assistant",
+    "placeholder": "Ask about destinations, tours, or travel tips...",
+    "height": "500px"
+  }
+}
